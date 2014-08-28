@@ -1,32 +1,35 @@
 require 'capybara'
 require 'selenium-webdriver'
+require 'highline/import'
 
 def usage
-	puts "<username> <password> <file/directory>"
+	puts "<file/directory>"
 	puts "all .gpx files in the directory will be processed"
 	exit
 end
 
-if (ARGV.length != 3)
+if (ARGV.length != 1)
 	usage()
 end
+directory = ARGV[0]
 
 files = []
-if File.directory?(ARGV[2]) then
-	Dir.chdir ARGV[2]
+if File.directory?(directory) then
+	Dir.chdir directory
 	files = Dir["*.gpx"]
-	files = files.map {|x| File.join(ARGV[2], x) }
-elsif File.file?(ARGV[2]) && File.extname(ARGV[2]).eql?(".gpx") then
-	files = [File.absolute_path(ARGV[2])]
+	files = files.map {|x| File.join(directory, x) }
+elsif File.file?(directory) && File.extname(directory).eql?(".gpx") then
+	files = [File.absolute_path(directory)]
 else
 	usage()
 end
 
-username = ARGV[0]
-password = ARGV[1]
-
 puts "Files to process: #{files.count}"
 
+username = ask("Enter your username:  ") { |q| q.echo = true }
+password = ask("Enter your password:  ") { |q| q.echo = "*" }
+
+Capybara.default_wait_time = 15
 session = Capybara::Session.new(:selenium)
 Selenium::WebDriver::Firefox::Binary.path='/Applications/nolstedt/Firefox.app/Contents/MacOS/firefox-bin'
 session.visit "https://www.endomondo.com/login"
@@ -43,25 +46,38 @@ if !session.has_css?("a.profileMenuLink") then
 end
 puts "Logged in."
 
-session.find('.createWorkoutLink').click()
-session.find('.fileImport').click()
-
-
-
 files.each do |file| 
 	puts file
-	begin
-		
-		session.attach_file 'MainContent_fuTcx', file
-		session.click_link_or_button 'MainContent_btnShowActivities'
+	session.visit "https://www.endomondo.com/workouts/"
 
-		
-	rescue => e
-		puts e.message
-		puts e
+	session.has_css?("a[class=createWorkoutLink]")
+	session.find('.createWorkoutLink').click()
+
+	session.has_css?(".fileImport")
+	session.find('.fileImport').click()
+
+	session.within_frame ( session.find('.iframed') ) do
+		session.attach_file 'uploadFile', file
 	end
+	puts "attached"
+	sleep 1
+
+	session.within_frame ( session.find('.iframed') ) do
+		puts session.has_css?('a[value=Next]')
+		session.find(:css, 'a[value=Next]').click
+	end
+	sleep 1
+	
+	session.within_frame ( session.find('.iframed') ) do
+		puts session.has_css?('a[value=Save]')
+		session.find(:css, 'a[value=Save]').click
+	end
+	sleep 1
+	
 	puts "#{file} done"
+	#File.delete file
 end
+
 puts "complete"
 sleep(2)
 exit(-1)
