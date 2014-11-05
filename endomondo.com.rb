@@ -31,7 +31,7 @@ password = ask("Enter your password:  ") { |q| q.echo = "*" }
 
 Capybara.default_wait_time = 15
 session = Capybara::Session.new(:selenium)
-Selenium::WebDriver::Firefox::Binary.path='/Applications/nolstedt/Firefox.app/Contents/MacOS/firefox-bin'
+#Selenium::WebDriver::Firefox::Binary.path='/Applications/nolstedt/Firefox.app/Contents/MacOS/firefox-bin'
 session.visit "https://www.endomondo.com/login"
 
 puts "Logging in."
