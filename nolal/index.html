@@ -252,7 +252,7 @@ pie_highchart_settings = {
             events: {
             	click: function (e) {
             		element = $("div[data-name="+this.name+"]");
-            		selectionClick(element, e.point);
+            		selectionClick(element, e.point.name);
             	}
         	}
         }
@@ -273,25 +273,23 @@ var updateContent = function(element, data) {
 		var chart = $(element).highcharts();
 		chart.showLoading();	
 	}
-
-	if (thetype === 'list') {
-		var url = "data";
-	data["name"] = settings.name;
 	
-	console.log("updating " + settings.name + " using " + JSON.stringify(data));	
-	} else {
-		var url = settings.name;	
-	}
-
-  	$.ajax({
-	  type: "GET",
+	var url = "data";
+  data["toupdate"] = settings.name;
+  console.log("updating " + settings.name + " using " + JSON.stringify(data));	
+	
+  $.ajax({
+	  type: "POST",
+    dataType: 'json',
 	  url: "http://localhost:4567/"+url,
-	  data: data
+	  data: JSON.stringify(data)
 	})
   	.done(function( serverdata ) {
   		var settings = $(element).data("settings");
   		var type = settings.type;
 
+console.log(settings);
+console.log(serverdata);
   		if (type === 'list') {
   			var select = $(element).find("select");
   			select.empty();
@@ -309,24 +307,28 @@ var updateContent = function(element, data) {
   			chart.series[0].setData(seriesdata, true);
   			chart.hideLoading();
   		}
+      if (type === 'current_count') {
+        var output = $(element).find("#output");
+        output.html(serverdata.data.count);
+      }
+
   	});
  };
 
 var selectionClick = function(element, value) {
 	//if value is unset we can fetch it depending on type...
-
 	//for each that is not itself !
 	//save the current selection that we work with from this view.
+  //every selection/name should only be in the list once !!!
+
 	var settings = $(element).data("settings");
 	var type = settings.type;
 
-	var data = {};
-	if (type === 'pie') {
-		data = {sel:settings.onselect, VAL:value.name};	
-	} 
-	if (type === 'list') {
-		data = {sel:settings.onselect, VAL:value};	
-	}
+  currentSelection.push({name: settings.name, value: value});
+
+  var data = {};
+  data.selection = currentSelection;
+  //data.selection.push({name: settings.name, value: value});
 
 	var elements = $("div[data-element=true]");
 	$.each(elements, function(i, celement) {
@@ -338,7 +340,8 @@ var selectionClick = function(element, value) {
 };
 
 $(function () {
-	//elements = ["gender", "teams"];
+	currentSelection = []
+
 	var elements = $("div[data-element=true]");
 	$.each(elements, function(i, element) {
 		var element_name = $(element).data("name");
@@ -374,12 +377,11 @@ var setup = function(element, settings) {
 };
 </script>
 
-<div data-element="true" data-name="teams" class="pull-left" style="width:230px;height:250px;">
-	
-</div>
-
-<div class="pull-left">
-<div data-element="false" data-name="gender" style="width:250px; height:250px;"></div>
+<div data-element="true" data-name="teams" class="pull-left" style="width:230px;height:250px;"></div>
+<div data-element="true" data-name="gender" class="pull-left" style="width:250px; height:250px;"></div>
+<div data-element="true" data-name="count" class="pull-left" style="width:250px; height:250px;">
+  Current count
+  <h3 id="output"></h3>
 </div>
 
 
