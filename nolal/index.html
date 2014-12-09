@@ -226,42 +226,96 @@ Highcharts.setOptions(Highcharts.theme);
 </head>
 <body>
 <script>
-pie_highchart_settings = {
-    chart: {
-        plotBackgroundColor: null,
-        plotBorderWidth: 1,//null,
-        plotShadow: false,
-    },
-    title: {
-        text: ''
-    },
-    tooltip: {
-        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-    },
-    plotOptions: {
-        pie: {
-            allowPointSelect: true,
-            cursor: 'pointer',
-            dataLabels: {
-                enabled: true,
-                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                style: {
-                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                }
-            },
-            events: {
-            	click: function (e) {
-            		element = $("div[data-name="+this.name+"]");
-            		selectionClick(element, e.point.name);
-            	}
-        	}
+var pie_highchart_settings = {
+  chart: {
+      plotBackgroundColor: null,
+      plotBorderWidth: 1,//null,
+      plotShadow: false,
+  },
+  title: {
+      text: ''
+  },
+  tooltip: {
+      pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+  },
+  plotOptions: {
+    pie: {
+      allowPointSelect: true,
+      cursor: 'pointer',
+      dataLabels: {
+        enabled: true,
+        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+        style: {
+          color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
         }
+      },
+      events: {
+      	click: function (e) {
+      		element = $("div[data-name="+this.name+"]");
+        	selectionClick(element, e.point.name);
+        }
+      }
+    }
+  },
+  series: [{
+    type: 'pie',
+    name: '', //<- see setup
+    data: []
+  }]
+};
+
+var line_highchart_settings = {
+  chart: {
+    events: {
+      selection: function (event) {
+        console.log(event);
+        console.log(event.target.container);
+        console.log($(event.target.container).parent());
+        console.log(event.xAxis[0].min);
+        console.log(event.xAxis[0].max);
+        element = $("div[data-name="+this.name+"]");
+        console.log(element);
+
+      },
     },
-    series: [{
-        type: 'pie',
-        name: '', //<- see setup
-        data: []
-    }]
+    zoomType: 'x'
+  },
+  title: {
+      text: '',
+      x: -20 //center
+  },
+  subtitle: {
+      text: '',
+      x: -20
+  },
+  xAxis: {
+      categories: ["cat1", "cat2", "cat4"]
+  },
+  yAxis: {
+      title: {
+          text: 'yaxis title'
+      },
+      plotLines: [{
+          value: 0,
+          width: 1,
+          color: '#808080'
+      }]
+  },
+ /* legend: {
+      layout: 'vertical',
+      align: 'right',
+      verticalAlign: 'middle',
+      borderWidth: 0
+  },*/
+  series: [{ 
+    name: '',
+    data: []
+    } 
+  /*{
+      name: 'Tokyo',
+      data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+  }*/
+  ]
 };
 
 
@@ -269,7 +323,7 @@ var updateContent = function(element, data) {
 	var settings = $(element).data("settings");
 
 	var thetype = settings.type;
-	if (thetype === 'pie') {
+	if (thetype === 'pie' || thetype == 'line_chart') {
 		var chart = $(element).highcharts();
 		chart.showLoading();	
 	}
@@ -290,6 +344,7 @@ var updateContent = function(element, data) {
 
 console.log(settings);
 console.log(serverdata);
+
   		if (type === 'list') {
   			var select = $(element).find("select");
   			select.empty();
@@ -307,6 +362,13 @@ console.log(serverdata);
   			chart.series[0].setData(seriesdata, true);
   			chart.hideLoading();
   		}
+      if (type === 'line_chart') {
+        var chart = $(element).highcharts();
+        chart.xAxis[0].categories = serverdata.data.x;
+        //chart.xAxis = serverdata.data.x;
+        chart.series[0].setData(serverdata.data.y, true)
+        chart.hideLoading(); 
+      }
       if (type === 'current_count') {
         var output = $(element).find("#output");
         output.html(serverdata.data.count);
@@ -372,14 +434,18 @@ var setup = function(element, settings) {
 	} else if (settings.type === 'pie') {
 		pie_highchart_settings.series[0].name = settings.name;
 		$(element).highcharts(pie_highchart_settings);
-	}
+	} else if (settings.type === 'line_chart') {
+    line_highchart_settings.series[0].name = settings.name;
+    $(element).highcharts(line_highchart_settings);
+  }
 
 };
 </script>
 
 <div data-element="true" data-name="teams" class="pull-left" style="width:230px;height:250px;"></div>
 <div data-element="true" data-name="gender" class="pull-left" style="width:250px; height:250px;"></div>
-<div data-element="true" data-name="count" class="pull-left" style="width:250px; height:250px;">
+<div data-element="true" data-name="contact_created" class="pull-left" style="width:350px; height:350px;"></div>
+<div data-element="true" data-name="count" class="pull-left" style="width:350px; height:350px;">
   Current count
   <h3 id="output"></h3>
 </div>

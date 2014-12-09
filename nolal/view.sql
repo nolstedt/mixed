@@ -1,6 +1,7 @@
 
 create or replace view nolstedt as (
 select c.id,
+c.date_entered contact_created,
 cc.gender_c as gender_c,
 t.id as team_id,
 t.name as team_name
