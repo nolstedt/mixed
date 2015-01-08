@@ -11,7 +11,6 @@
 
 # stöd för fler databaser ? mysql syntax etc måste då abstraheras bort. dsl..jobbigt.
 
-
 require 'sinatra'
 require "sinatra/json"
 require 'mysql2'
@@ -25,6 +24,10 @@ DEF = %Q{select id,
 from nolstedt
   where 1=1
 }
+
+set :bind, '0.0.0.0'
+#set :port, 9494
+
 
 def get_current
   return "( #{DEF} ) current"
