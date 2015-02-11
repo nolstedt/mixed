@@ -23,7 +23,7 @@ FileWatcher.new(dir).watch do |filename, event|
     param["body"] = filename
     param["device_iden"] = device
     
-    puts RestClient.post url, param.to_json, :content_type => "application/json"
+    RestClient.post url, param.to_json, :content_type => "application/json"
   end
 
 end
