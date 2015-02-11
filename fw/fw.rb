@@ -16,14 +16,15 @@ FileWatcher.new(dir).watch do |filename, event|
   end
   if(event == :new)
     puts "Added file: " + filename
-    url = "https://#{apikey}:@api.pushbullet.com/v2/pushes"
-    param = {}
-    param["type"] = "note"
-    param["title"] = "File appeared"
-    param["body"] = filename
-    param["device_iden"] = device
-    
-    RestClient.post url, param.to_json, :content_type => "application/json"
+    if (File.directory?(filename)) then
+      url = "https://#{apikey}:@api.pushbullet.com/v2/pushes"
+      param = {}
+      param["type"] = "note"
+      param["title"] = "File appeared"
+      param["body"] = filename
+      param["device_iden"] = device
+      RestClient.post url, param.to_json, :content_type => "application/json"
+    end
   end
 
 end
