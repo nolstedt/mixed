@@ -1,5 +1,0 @@
-
-dir = ""
-apikey = ""
-device = ""
-

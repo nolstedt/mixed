@@ -1,7 +1,11 @@
 require 'filewatcher'
 require 'rest-client'
+require 'yaml'
 
-load "config.rb"
+config = YAML.load_file('config.yml')
+dir = config["dir"]
+apikey = config["apikey"]
+device = config["device"]
 
 FileWatcher.new(dir).watch do |filename, event|
   if(event == :changed)
