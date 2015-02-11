@@ -32,7 +32,7 @@ password = ask("Enter your password:  ") { |q| q.echo = "*" }
 Capybara.default_wait_time = 15
 session = Capybara::Session.new(:selenium)
 Selenium::WebDriver::Firefox::Binary.path='/Applications/Firefox.app/Contents/MacOS/firefox-bin'
-session.visit "http://www.jogg.se"
+session.visit "http://www.jogg.se/Traning/NyttFilPass.aspx"
 
 puts "Logging in."
 

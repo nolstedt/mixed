@@ -1,0 +1,5 @@
+
+dir = ""
+apikey = ""
+device = ""
+
