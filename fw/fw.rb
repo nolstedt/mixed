@@ -16,7 +16,7 @@ FileWatcher.new(dir).watch do |filename, event|
   end
   if(event == :new)
     puts "Added file: " + filename
-    if (File.directory?(filename)) then
+    if (File.directory?(filename) && !filename.start_with?("_UNPACK")) then
       url = "https://#{apikey}:@api.pushbullet.com/v2/pushes"
       param = {}
       param["type"] = "note"
