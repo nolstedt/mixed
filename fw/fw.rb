@@ -16,12 +16,14 @@ FileWatcher.new(dir).watch do |filename, event|
   end
   if(event == :new)
     puts "Added file: " + filename
-    if (File.directory?(filename) && !filename.start_with?("_UNPACK")) then
+    bn = File.basename(filename)
+    if (File.directory?(filename) && !bn.start_with?("_UNPACK")) then
+      puts "Push to device"
       url = "https://#{apikey}:@api.pushbullet.com/v2/pushes"
       param = {}
       param["type"] = "note"
-      param["title"] = "File appeared"
-      param["body"] = filename
+      param["title"] = "File: #{bn}"
+      param["body"] = bn
       param["device_iden"] = device
       RestClient.post url, param.to_json, :content_type => "application/json"
     end
