@@ -19,6 +19,15 @@ def logwarn(logger, msg)
         logger.warn(msg)
 end
 
+def readTemperature(file)
+	value = File.read(temperaturefile).to_s.strip
+	if value.eql?("85") then
+		sleep 1
+		value = File.read(temperaturefile).to_s.strip
+	end
+	return value;
+end
+
 logger = Logger.new("#{File.basename(__FILE__)}.log", 20, 10240000)
 config = YAML.load_file('config.yml')
 
@@ -40,11 +49,11 @@ Dir.chdir path
 sensors = Dir.glob "28*"
 sensors.each do |sensor|
 	temperaturefile = File.join(path, sensor, "temperature")
-	v = {}
-	v["sensor"] = sensor
-	v["value"] = File.read(temperaturefile).to_s.strip
-	v["time"] = Time.now.to_i
-	message = JSON.unparse v
+	values = {}
+	values["sensor"] = sensor
+	values["value"] = readTemperature(temperaturefile)
+	values["time"] = Time.now.to_i
+	message = JSON.unparse values
 	x.publish(message, :routing_key => queue, :persistent => true)
 	loginfo(logger, "published #{message}")
 end
