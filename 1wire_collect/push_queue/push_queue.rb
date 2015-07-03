@@ -20,10 +20,10 @@ def logwarn(logger, msg)
 end
 
 def readTemperature(file, logger)
-	value = File.read(temperaturefile).to_s.strip
+	value = File.read(file).to_s.strip
 	if value.eql?("85") then
 		sleep 1
-		value = File.read(temperaturefile).to_s.strip
+		value = File.read(file).to_s.strip
 		loginfo(logger, "Read 85 value. New read gave: #{value}")
 	end
 	return value;
