@@ -19,11 +19,12 @@ def logwarn(logger, msg)
         logger.warn(msg)
 end
 
-def readTemperature(file)
+def readTemperature(file, logger)
 	value = File.read(temperaturefile).to_s.strip
 	if value.eql?("85") then
 		sleep 1
 		value = File.read(temperaturefile).to_s.strip
+		loginfo(logger, "Read 85 value. New read gave: #{value}")
 	end
 	return value;
 end
@@ -51,7 +52,7 @@ sensors.each do |sensor|
 	temperaturefile = File.join(path, sensor, "temperature")
 	values = {}
 	values["sensor"] = sensor
-	values["value"] = readTemperature(temperaturefile)
+	values["value"] = readTemperature(temperaturefile, logger)
 	values["time"] = Time.now.to_i
 	message = JSON.unparse values
 	x.publish(message, :routing_key => queue, :persistent => true)
