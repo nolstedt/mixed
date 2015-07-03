@@ -1,0 +1,10 @@
+# Logfile created on 2015-07-03 12:39:56 +0000 by logger.rb/31641
+I, [2015-07-03T12:39:56.839613 #10709]  INFO -- : Running, queue: 1wire
+I, [2015-07-03T12:39:56.904805 #10709]  INFO -- : Process message.
+I, [2015-07-03T12:39:56.997365 #10709]  INFO -- : published: {"sensor":"28.DD63E8030000","value":"26.875","time":1435926669}
+I, [2015-07-03T12:39:57.000278 #10709]  INFO -- : Ack message.
+I, [2015-07-03T12:39:57.007795 #10709]  INFO -- : Process message.
+I, [2015-07-03T12:39:57.095194 #10709]  INFO -- : published: {"sensor":"28.AB46E8030000","value":"27.375","time":1435926673}
+I, [2015-07-03T12:39:57.098106 #10709]  INFO -- : Ack message.
+F, [2015-07-03T12:45:07.398400 #11030] FATAL -- : Failed creating a connection to rabbitmq,  .
+F, [2015-07-03T12:45:07.401415 #11030] FATAL -- : Could not establish TCP connection to 127.0.0.1:: 
