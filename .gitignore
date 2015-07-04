@@ -3,3 +3,4 @@
 1wire_collect/push_queue/push_queue.rb.*
 1wire_collect/push_queue/config.yml
 1wire_store_db/store_1wire_from_bunny.rb.*
+1wire_store_db/config.yml
