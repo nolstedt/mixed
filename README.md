@@ -1,5 +1,8 @@
 ### 1wire
 
+rabbitmq from rabbitmq.com apt-get repo.
+bunny gem version 1.4.1
+
 rc.local
 
 mount 1wire
