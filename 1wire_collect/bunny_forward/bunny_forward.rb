@@ -7,20 +7,22 @@ require 'yaml'
 
 def loginfo(logger, msg)
 	puts msg
-	logger.info(msg)
+	#logger.info(msg)
 end
 
 def logfatal(logger, msg)
 	puts msg
-	logger.fatal(msg)
+	#logger.fatal(msg)
 end
 
 def logwarn(logger, msg)
 	puts msg
-	logger.warn(msg)
+	#logger.warn(msg)
 end
 
-logger = Logger.new("#{File.basename(__FILE__)}.log", 20, 10240000)
+logger = nil
+#logger = Logger.new("#{File.basename(__FILE__)}.log", 20, 10240000)
+
 config = YAML.load_file('config.yml')
 
 #rabbitmq-local
